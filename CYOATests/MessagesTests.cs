@@ -26,6 +26,14 @@ public class MessagesTests
     }
 
     [TestMethod]
+    public void SetCurrentLanguage_SetsLanguageToItalian()
+    {
+        Messages messages = new Messages();
+        messages.SetCurrentLanguage("Italian");
+        Assert.AreEqual("Italian", messages.CurrentLanguage);
+    }
+
+    [TestMethod]
     public void SetCurrentLanguage_SetsLanguageToEnglish()
     {
         Messages messages = new Messages();
@@ -62,6 +70,16 @@ public class MessagesTests
         messages.ReadDictionary();
         string result = messages.GetMessage("welcome");
         Assert.AreEqual("Bienvenue dans Choisissez Votre Aventure", result);
+    }
+
+    [TestMethod]
+    public void ReadDictionary_LoadsItalianWelcomeMessage()
+    {
+        Messages messages = new Messages();
+        messages.SetCurrentLanguage("Italian");
+        messages.ReadDictionary();
+        string result = messages.GetMessage("welcome");
+        Assert.AreEqual("Benvenuto a Scegli la Tua Avventura", result);
     }
 
     [TestMethod]
@@ -105,6 +123,10 @@ public class MessagesTests
         messages.SetCurrentLanguage("French");
         messages.ReadDictionary();
         Assert.AreEqual("Au revoir!", messages.GetMessage("goodbye"));
+
+        messages.SetCurrentLanguage("Italian");
+        messages.ReadDictionary();
+        Assert.AreEqual("Arrivederci!", messages.GetMessage("goodbye"));
     }
 
     [TestMethod]
@@ -158,6 +180,24 @@ public class MessagesTests
         {
             string result = messages.GetMessage(key);
             Assert.AreNotEqual($"[{key}]", result, $"Key '{key}' is missing from French dictionary.");
+        }
+    }
+
+    [TestMethod]
+    public void ReadDictionary_AllRequiredKeysExistInItalian()
+    {
+        Messages messages = new Messages();
+        messages.SetCurrentLanguage("Italian");
+        messages.ReadDictionary();
+
+        string[] requiredKeys = { "welcome", "menu",
+                                   "choose_path", "path_north", "path_south", "attack_prompt",
+                                   "victory", "defeat", "retreat", "invalid", "goodbye" };
+
+        foreach (string key in requiredKeys)
+        {
+            string result = messages.GetMessage(key);
+            Assert.AreNotEqual($"[{key}]", result, $"Key '{key}' is missing from Italian dictionary.");
         }
     }
 
@@ -276,7 +316,7 @@ public class MessagesTests
     // --- TranslateForDisplay Tests ---
 
     [TestMethod]
-    public void TranslateRaceForDisplay_ReturnsTranslatedName_InSpanishAndFrench()
+    public void TranslateRaceForDisplay_ReturnsTranslatedName_InAllLanguages()
     {
         Messages spanish = new Messages();
         spanish.SetCurrentLanguage("Spanish");
@@ -288,10 +328,17 @@ public class MessagesTests
         french.SetCurrentLanguage("French");
         french.ReadDictionary();
         Assert.AreEqual("Elfe", french.TranslateRaceForDisplay("Elf"));
+
+        Messages italian = new Messages();
+        italian.SetCurrentLanguage("Italian");
+        italian.ReadDictionary();
+        Assert.AreEqual("Elfo", italian.TranslateRaceForDisplay("Elf"));
+        Assert.AreEqual("Nano", italian.TranslateRaceForDisplay("Dwarf"));
+        Assert.AreEqual("Umano", italian.TranslateRaceForDisplay("Human"));
     }
 
     [TestMethod]
-    public void TranslateOccupationForDisplay_ReturnsTranslatedName_InSpanishAndFrench()
+    public void TranslateOccupationForDisplay_ReturnsTranslatedName_InAllLanguages()
     {
         Messages spanish = new Messages();
         spanish.SetCurrentLanguage("Spanish");
@@ -303,10 +350,16 @@ public class MessagesTests
         french.SetCurrentLanguage("French");
         french.ReadDictionary();
         Assert.AreEqual("Guerrier", french.TranslateOccupationForDisplay("Fighter"));
+
+        Messages italian = new Messages();
+        italian.SetCurrentLanguage("Italian");
+        italian.ReadDictionary();
+        Assert.AreEqual("Guerriero", italian.TranslateOccupationForDisplay("Fighter"));
+        Assert.AreEqual("Mago", italian.TranslateOccupationForDisplay("Magician"));
     }
 
     [TestMethod]
-    public void TranslateWeaponForDisplay_ReturnsTranslatedName_InSpanishAndFrench()
+    public void TranslateWeaponForDisplay_ReturnsTranslatedName_InAllLanguages()
     {
         Messages spanish = new Messages();
         spanish.SetCurrentLanguage("Spanish");
@@ -317,6 +370,38 @@ public class MessagesTests
         french.SetCurrentLanguage("French");
         french.ReadDictionary();
         Assert.AreEqual("epee longue", french.TranslateWeaponForDisplay("long sword"));
+
+        Messages italian = new Messages();
+        italian.SetCurrentLanguage("Italian");
+        italian.ReadDictionary();
+        Assert.AreEqual("spada lunga", italian.TranslateWeaponForDisplay("long sword"));
+        Assert.AreEqual("pugnale", italian.TranslateWeaponForDisplay("dagger"));
+    }
+
+    [TestMethod]
+    public void IsValidRace_And_NormalizeRace_WorkForItalian()
+    {
+        Messages italian = new Messages();
+        italian.SetCurrentLanguage("Italian");
+        italian.ReadDictionary();
+
+        Assert.IsTrue(italian.IsValidRace("umano"));
+        Assert.IsTrue(italian.IsValidRace("NANO"));
+        Assert.AreEqual("Human", italian.NormalizeRace("umano"));
+        Assert.AreEqual("Dwarf", italian.NormalizeRace("NANO"));
+    }
+
+    [TestMethod]
+    public void IsValidOccupation_And_NormalizeOccupation_WorkForItalian()
+    {
+        Messages italian = new Messages();
+        italian.SetCurrentLanguage("Italian");
+        italian.ReadDictionary();
+
+        Assert.IsTrue(italian.IsValidOccupation("guerriero"));
+        Assert.IsTrue(italian.IsValidOccupation("MAGO"));
+        Assert.AreEqual("Fighter", italian.NormalizeOccupation("guerriero"));
+        Assert.AreEqual("Magician", italian.NormalizeOccupation("MAGO"));
     }
 
     [TestMethod]
