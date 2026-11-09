@@ -316,7 +316,7 @@ public class MessagesTests
         Messages french = new Messages();
         french.SetCurrentLanguage("French");
         french.ReadDictionary();
-        Assert.AreEqual("épée longue", french.TranslateWeaponForDisplay("long sword"));
+        Assert.AreEqual("epee longue", french.TranslateWeaponForDisplay("long sword"));
     }
 
     [TestMethod]
