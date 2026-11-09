@@ -272,4 +272,63 @@ public class MessagesTests
         messages.ReadDictionary();
         Assert.AreEqual("Fighter", messages.NormalizeOccupation("FIGHTER"));
     }
+
+    // --- TranslateForDisplay Tests ---
+
+    [TestMethod]
+    public void TranslateRaceForDisplay_ReturnsTranslatedName_InSpanishAndFrench()
+    {
+        Messages spanish = new Messages();
+        spanish.SetCurrentLanguage("Spanish");
+        spanish.ReadDictionary();
+        Assert.AreEqual("Elfo", spanish.TranslateRaceForDisplay("Elf"));
+        Assert.AreEqual("Elfo", spanish.TranslateRaceForDisplay("elf"));
+
+        Messages french = new Messages();
+        french.SetCurrentLanguage("French");
+        french.ReadDictionary();
+        Assert.AreEqual("Elfe", french.TranslateRaceForDisplay("Elf"));
+    }
+
+    [TestMethod]
+    public void TranslateOccupationForDisplay_ReturnsTranslatedName_InSpanishAndFrench()
+    {
+        Messages spanish = new Messages();
+        spanish.SetCurrentLanguage("Spanish");
+        spanish.ReadDictionary();
+        Assert.AreEqual("Guerrero", spanish.TranslateOccupationForDisplay("Fighter"));
+        Assert.AreEqual("Guerrero", spanish.TranslateOccupationForDisplay("fighter"));
+
+        Messages french = new Messages();
+        french.SetCurrentLanguage("French");
+        french.ReadDictionary();
+        Assert.AreEqual("Guerrier", french.TranslateOccupationForDisplay("Fighter"));
+    }
+
+    [TestMethod]
+    public void TranslateWeaponForDisplay_ReturnsTranslatedName_InSpanishAndFrench()
+    {
+        Messages spanish = new Messages();
+        spanish.SetCurrentLanguage("Spanish");
+        spanish.ReadDictionary();
+        Assert.AreEqual("espada larga", spanish.TranslateWeaponForDisplay("long sword"));
+
+        Messages french = new Messages();
+        french.SetCurrentLanguage("French");
+        french.ReadDictionary();
+        Assert.AreEqual("épée longue", french.TranslateWeaponForDisplay("long sword"));
+    }
+
+    [TestMethod]
+    public void TranslateMethods_DoNotThrow_WhenCalledBeforeReadDictionary()
+    {
+        Messages messages = new Messages();
+
+        Assert.AreEqual("Elf", messages.TranslateRaceForDisplay("Elf"));
+        Assert.AreEqual("Fighter", messages.TranslateOccupationForDisplay("Fighter"));
+        Assert.AreEqual("long sword", messages.TranslateWeaponForDisplay("long sword"));
+        Assert.AreEqual(string.Empty, messages.TranslateRaceForDisplay(null));
+        Assert.AreEqual(string.Empty, messages.TranslateOccupationForDisplay(null));
+        Assert.AreEqual(string.Empty, messages.TranslateWeaponForDisplay(null));
+    }
 }
